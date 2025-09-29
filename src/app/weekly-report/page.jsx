@@ -1,8 +1,9 @@
 import { tables } from '@/lib/tables'
 import WeeklyReportClient from './components/WeeklyReportClient'
 
-export default function WeeklyReport() {
-  return <WeeklyReportClient />
+export default async function WeeklyReport() {
+  const ordNoC = await tables.sysAccessToken.getOrdNo()
+  return <WeeklyReportClient ordNoC={ordNoC} />
 }
 
 export async function generateMetadata({ searchParams }) {

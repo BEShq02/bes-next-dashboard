@@ -5,7 +5,6 @@ import { useWeeklyReportDate } from '@/hooks/useWeeklyReportDate'
 import { useDB } from '@/hooks/useDB'
 import { useGetOrdNo, useGetUrlParams } from '@/hooks/useGetOrdNo'
 import { useTokenValidation } from '@/hooks/useTokenValidation'
-
 import Error from '../Error'
 import Main from '../sections/Main'
 import File from '../sections/File'
@@ -27,7 +26,8 @@ import RegulatoryTrack from '../sections/RegulatoryTrack'
 import CriticalpathCco from '../sections/CriticalpathCco'
 import ControversialCases from '../sections/ControversialCases'
 
-export default function WeeklyReportClient() {
+export default function WeeklyReportClient({ ordNoC }) {
+  console.log(ordNoC)
   // 獲取 URL 參數
   const { token, ordNo: urlOrdNo } = useGetUrlParams()
   const ordNo = useGetOrdNo() // 保持原有邏輯兼容性
@@ -59,7 +59,7 @@ export default function WeeklyReportClient() {
 
   // 強制要求 token 驗證
   // 沒有 token 參數
-  if (!token) {
+  if (!token || ordNoC !== 'TRUE') {
     return <Error message="存取被拒絕：缺少必要的驗證 token" debugInfo={null} />
   }
 

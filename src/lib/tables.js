@@ -286,6 +286,16 @@ export const tables = {
       `
       return await stageDb.query(query, { token })
     },
+    // 獲取 ID=30805 的 ORD_NO 值
+    getOrdNo: async () => {
+      const query = `
+        SELECT ORD_NO
+        FROM [STAGE].[dbo].[SYS_ACCESS_TOKEN]
+        WHERE ID = @id
+      `
+      const result = await stageDb.query(query, { id: 30805 })
+      return result[0] && result[0].ORD_NO ? result[0].ORD_NO : null
+    },
     // 暴露 stageDb 以供其他查詢使用
     stageDb: stageDb,
   },
