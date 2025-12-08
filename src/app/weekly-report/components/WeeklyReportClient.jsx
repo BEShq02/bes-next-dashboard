@@ -26,14 +26,14 @@ import RegulatoryTrack from '../sections/RegulatoryTrack'
 import CriticalpathCco from '../sections/CriticalpathCco'
 import ControversialCases from '../sections/ControversialCases'
 
-export default function WeeklyReportClient({ ordNoC, skipAuth = false, adminOrdNo = null }) {
+export default function WeeklyReportClient({ ordNoC, skipAuth = false, adminOrdNo = null, dbOrdNo = null }) {
   console.log(ordNoC)
   // 獲取 URL 參數
   const { token, ordNo: urlOrdNo } = useGetUrlParams()
   const ordNo = useGetOrdNo() // 保持原有邏輯兼容性
 
-  // 使用 URL 參數中的 ordNo 或回退到原有的 ordNo，或使用 adminOrdNo
-  const finalOrdNo = adminOrdNo || urlOrdNo || ordNo
+  // 優先順序：adminOrdNo > dbOrdNo（從資料庫取得）> urlOrdNo（URL 參數）> ordNo（原有邏輯）
+  const finalOrdNo = adminOrdNo || dbOrdNo || urlOrdNo || ordNo
 
   // Token 驗證（只有在有 token 參數時才進行驗證，且 skipAuth 為 false）
   const {

@@ -1,5 +1,4 @@
 import { tables } from '@/lib/tables'
-import { redirect } from 'next/navigation'
 import WeeklyReportClient from './components/WeeklyReportClient'
 
 export default async function WeeklyReport({ searchParams }) {
@@ -11,21 +10,18 @@ export default async function WeeklyReport({ searchParams }) {
     return <WeeklyReportClient skipAuth={true} adminOrdNo={ordNo} />
   }
   
-  // 如果只有 token 而沒有 ORD_NO，從資料庫查詢 ORD_NO
+  // 如果只有 token 參數而沒有 ORD_NO，從資料庫取得 ORD_NO
+  let dbOrdNo = null
   if (token && !ordNo) {
     try {
-      const ordNoFromToken = await tables.sysAccessToken.getOrdNoByToken(token)
-      if (ordNoFromToken) {
-        // 重定向到包含 ORD_NO 的 URL
-        redirect(`/weekly-report?token=${encodeURIComponent(token)}&ORD_NO=${encodeURIComponent(ordNoFromToken)}`)
-      }
+      dbOrdNo = await tables.sysAccessToken.getOrdNoByToken(token)
     } catch (error) {
-      console.error('從 token 取得 ORD_NO 失敗:', error)
+      console.error('從資料庫取得 ORD_NO 失敗:', error)
     }
   }
   
   // 其他情況都需要 token 驗證
-  return <WeeklyReportClient ordNoC={ordNoC} />
+  return <WeeklyReportClient ordNoC={ordNoC} dbOrdNo={dbOrdNo} />
 }
 
 export async function generateMetadata({ searchParams }) {

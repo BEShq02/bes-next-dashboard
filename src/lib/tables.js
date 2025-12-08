@@ -296,7 +296,7 @@ export const tables = {
       const result = await stageDb.query(query, { id: 30805 })
       return result[0] && result[0].ORD_NO ? result[0].ORD_NO : null
     },
-    // 根據 token 獲取 ORD_NO
+    // 根據 token 從 SYS_ACCESS_TOKEN 表中取得 ORD_NO
     getOrdNoByToken: async token => {
       const query = `
         SELECT ORD_NO
