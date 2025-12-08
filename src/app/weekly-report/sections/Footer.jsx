@@ -13,7 +13,7 @@ export default function Footer() {
   }
 
   return (
-    <Box sx={{ width: '100%', textAlign: 'center', pt: 24 }}>
+    <Box sx={{ width: '100%', textAlign: 'center', pt: 4 }}>
       <Typography variant="body2" color="text.secondary">
         中華工程 影音即時指揮中心開發
       </Typography>

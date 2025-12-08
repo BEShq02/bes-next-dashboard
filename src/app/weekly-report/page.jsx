@@ -25,11 +25,22 @@ export default async function WeeklyReport({ searchParams }) {
 }
 
 export async function generateMetadata({ searchParams }) {
-  const { ORD_NO: ordNo } = await searchParams
+  const { ORD_NO: ordNo, token } = await searchParams
   const defaultSiteName = '工務所'
   const defaultOrdCh = '工令'
 
-  if (!ordNo) {
+  // 如果沒有 ORD_NO，但有 token，嘗試從資料庫取得 ORD_NO
+  let finalOrdNo = ordNo
+  if (!finalOrdNo && token) {
+    try {
+      finalOrdNo = await tables.sysAccessToken.getOrdNoByToken(token)
+    } catch (error) {
+      console.error('從資料庫取得 ORD_NO 失敗:', error)
+    }
+  }
+
+  // 如果還是沒有 ORD_NO，返回預設標題
+  if (!finalOrdNo) {
     return {
       title: `${defaultSiteName} - ${defaultOrdCh}`,
     }
@@ -39,7 +50,7 @@ export async function generateMetadata({ searchParams }) {
   let ordCh = defaultOrdCh
 
   try {
-    const wkMainData = await tables.wkMain.getData(ordNo)
+    const wkMainData = await tables.wkMain.getData(finalOrdNo)
     siteName = wkMainData[0]?.SITE_CNAME || defaultSiteName
     ordCh = wkMainData[0]?.ORD_CH || defaultOrdCh
   } catch (error) {
