@@ -1,21 +1,39 @@
 'use client'
 
 import { fmNoUnit } from '@/utils/fm'
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useCallback } from 'react'
 
 import { red } from '@mui/material/colors'
 import { DataGrid } from '@mui/x-data-grid'
-import { Box, Stack, Select, MenuItem, InputLabel, FormControl } from '@mui/material'
+import {
+  Box,
+  Stack,
+  Select,
+  MenuItem,
+  InputLabel,
+  Typography,
+  FormControl,
+  ToggleButton,
+  ToggleButtonGroup,
+} from '@mui/material'
 
 import MetricCards from './MetricCards'
 import EnsureTypeChip from './EnsureTypeChip'
 export default function EnsureTable({ data = [], descData = [] }) {
   // 篩選狀態
   const [siteFilter, setSiteFilter] = useState('')
+  const [warrantyStatusFilter, setWarrantyStatusFilter] = useState('all') // 'all', 'released', 'notReleased'
+  const [ensureTypeFilter, setEnsureTypeFilter] = useState(undefined) // undefined 表示未點擊，null 表示點擊整體，字符串表示點擊特定種類
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
+  }, [])
+
+  // 處理卡片點擊事件：設置保固金種類篩選並重設工務所篩選為全部
+  const handleCardClick = useCallback(ensureType => {
+    setEnsureTypeFilter(ensureType)
+    setSiteFilter('') // 點擊卡片時，將工務所篩選重設為全部
   }, [])
 
   // 獲取所有不重複的工務所名稱
@@ -30,12 +48,39 @@ export default function EnsureTable({ data = [], descData = [] }) {
     if (siteFilter) {
       result = data.filter(row => row.SITE_CNAME === siteFilter)
     }
+    // 根據保固金種類篩選（點擊卡片時）
+    // ensureTypeFilter 為 undefined 表示未點擊卡片（初始狀態）
+    // ensureTypeFilter 為 null 表示點擊了"整體未解除保固狀況"卡片
+    // ensureTypeFilter 為字符串表示點擊了特定保固金種類卡片
+    if (ensureTypeFilter !== undefined) {
+      // 當點擊卡片時，只顯示沒有保固解除日的資料
+      if (ensureTypeFilter === null) {
+        // 點擊"整體未解除保固狀況"卡片：只顯示沒有保固解除日的資料
+        result = result.filter(row => row.STOP_ENSURE_DATE == null || row.STOP_ENSURE_DATE === '')
+      } else {
+        // 點擊特定保固金種類卡片：只顯示該種類且沒有保固解除日的資料
+        result = result.filter(
+          row =>
+            row.ENSURE_CH === ensureTypeFilter &&
+            (row.STOP_ENSURE_DATE == null || row.STOP_ENSURE_DATE === '')
+        )
+      }
+    } else {
+      // 沒有點擊卡片時，使用保固狀態篩選
+      if (warrantyStatusFilter === 'released') {
+        // 已解除：保固解除日有日期
+        result = result.filter(row => row.STOP_ENSURE_DATE != null && row.STOP_ENSURE_DATE !== '')
+      } else if (warrantyStatusFilter === 'notReleased') {
+        // 未解除：保固解除日沒有日期
+        result = result.filter(row => row.STOP_ENSURE_DATE == null || row.STOP_ENSURE_DATE === '')
+      }
+    }
     // 為每一行添加行號
     return result.map((row, index) => ({
       ...row,
       rowNumber: index + 1,
     }))
-  }, [data, siteFilter])
+  }, [data, siteFilter, warrantyStatusFilter, ensureTypeFilter])
 
   // 篩選 descData 中符合當前選擇工務所的數據
   const filteredDescData = useMemo(() => {
@@ -66,7 +111,7 @@ export default function EnsureTable({ data = [], descData = [] }) {
 
       disableColumnMenu: true,
     },
-    { field: 'ORD_CH', headerName: '工程名稱', minWidth: 140, disableColumnMenu: true },
+    { field: 'ORD_CH', headerName: '工程名稱', minWidth: 120, disableColumnMenu: true },
     {
       field: 'ITEM_NO',
       headerName: '保固項次',
@@ -76,7 +121,7 @@ export default function EnsureTable({ data = [], descData = [] }) {
       headerAlign: 'left',
       disableColumnMenu: true,
     },
-    { field: 'ENSURE_DESC', headerName: '保固內容', minWidth: 200, disableColumnMenu: true },
+    { field: 'ENSURE_DESC', headerName: '保固內容', minWidth: 120, disableColumnMenu: true },
     {
       field: 'ENSURE_YEARS',
       headerName: '保固年數',
@@ -131,8 +176,14 @@ export default function EnsureTable({ data = [], descData = [] }) {
       },
       disableColumnMenu: true,
     },
-    { field: 'ENSURE_PROCESSING', headerName: '處理情形', minWidth: 200, disableColumnMenu: true },
-    { field: 'REMARK', headerName: '備註', minWidth: 200, disableColumnMenu: true },
+    {
+      field: 'STOP_ENSURE_DATE',
+      headerName: '保固解除日',
+      resizable: false,
+      disableColumnMenu: true,
+    },
+    { field: 'ENSURE_PROCESSING', headerName: '處理情形', minWidth: 120, disableColumnMenu: true },
+    { field: 'REMARK', headerName: '備註', minWidth: 120, disableColumnMenu: true },
     { field: 'ENSURE_ID', headerName: '保固ID', resizable: false, disableColumnMenu: true },
     { field: 'MNG', headerName: '主管部門ID', resizable: false, disableColumnMenu: true },
     {
@@ -185,13 +236,6 @@ export default function EnsureTable({ data = [], descData = [] }) {
       resizable: false,
       disableColumnMenu: true,
     },
-
-    {
-      field: 'STOP_ENSURE_DATE',
-      headerName: '保固解除日',
-      resizable: false,
-      disableColumnMenu: true,
-    },
     { field: 'PROJECT_ID', headerName: '專案ID', resizable: false, disableColumnMenu: true },
     { field: 'ORD_NO', headerName: '工令', resizable: false, disableColumnMenu: true },
     { field: 'DIV', headerName: '工務所ID', resizable: false, disableColumnMenu: true },
@@ -214,7 +258,12 @@ export default function EnsureTable({ data = [], descData = [] }) {
     return (
       <Stack direction="column" gap={2}>
         {/* 指標卡片區域 */}
-        <MetricCards data={data} siteFilter={siteFilter} />
+        <MetricCards
+          data={data}
+          siteFilter={siteFilter}
+          onCardClick={handleCardClick}
+          selectedEnsureType={ensureTypeFilter}
+        />
         {/* 下拉選單 */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <FormControl size="small" sx={{ minWidth: 'fit-content' }}>
@@ -222,7 +271,11 @@ export default function EnsureTable({ data = [], descData = [] }) {
             <Select
               value={siteFilter}
               label="篩選工務所"
-              onChange={e => setSiteFilter(e.target.value)}
+              onChange={e => {
+                setSiteFilter(e.target.value)
+                // 當下拉選單變更時，重設卡片篩選條件
+                setEnsureTypeFilter(undefined)
+              }}
               sx={{
                 minWidth: 120,
                 width: 'auto',
@@ -242,6 +295,34 @@ export default function EnsureTable({ data = [], descData = [] }) {
               ))}
             </Select>
           </FormControl>
+          {/* 保固狀態按鈕群組 */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>
+              保固狀態：
+            </Typography>
+            <ToggleButtonGroup
+              value={warrantyStatusFilter}
+              exclusive
+              onChange={(e, newValue) => {
+                if (newValue !== null) {
+                  setWarrantyStatusFilter(newValue)
+                  // 當點擊保固狀態按鈕時，解除卡片點擊狀態
+                  setEnsureTypeFilter(undefined)
+                }
+              }}
+              size="small"
+              sx={{
+                '& .MuiToggleButton-root': {
+                  textTransform: 'none',
+                  px: 2,
+                },
+              }}
+            >
+              <ToggleButton value="all">全部資料</ToggleButton>
+              <ToggleButton value="notReleased">未解除</ToggleButton>
+              <ToggleButton value="released">已解除</ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
           {/* ORD_CH 按鈕區域 */}
           {/* {filteredDescData.length > 0 && (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -292,7 +373,6 @@ export default function EnsureTable({ data = [], descData = [] }) {
                 CLOSE_AMOUNT: false,
                 EST_ENSURE_AMOUNT: false,
                 ENSURE_START_DATE: false,
-                STOP_ENSURE_DATE: false,
                 PROJECT_ID: false,
                 ORD_NO: false,
                 DIV: false,
@@ -335,7 +415,12 @@ export default function EnsureTable({ data = [], descData = [] }) {
   return (
     <Stack direction="column" gap={2}>
       {/* 指標卡片區域 */}
-      <MetricCards data={data} siteFilter={siteFilter} />
+      <MetricCards
+        data={data}
+        siteFilter={siteFilter}
+        onCardClick={handleCardClick}
+        selectedEnsureType={ensureTypeFilter}
+      />
       {/* 下拉選單 */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <FormControl size="small" sx={{ minWidth: 'fit-content' }}>
@@ -343,7 +428,11 @@ export default function EnsureTable({ data = [], descData = [] }) {
           <Select
             value={siteFilter}
             label="篩選工務所"
-            onChange={e => setSiteFilter(e.target.value)}
+            onChange={e => {
+              setSiteFilter(e.target.value)
+              // 當下拉選單變更時，重設卡片篩選條件
+              setEnsureTypeFilter(undefined)
+            }}
             sx={{
               minWidth: 120,
               width: 'auto',
@@ -363,6 +452,34 @@ export default function EnsureTable({ data = [], descData = [] }) {
             ))}
           </Select>
         </FormControl>
+        {/* 保固狀態按鈕群組 */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>
+            保固狀態：
+          </Typography>
+          <ToggleButtonGroup
+            value={warrantyStatusFilter}
+            exclusive
+            onChange={(e, newValue) => {
+              if (newValue !== null) {
+                setWarrantyStatusFilter(newValue)
+                // 當點擊保固狀態按鈕時，解除卡片點擊狀態
+                setEnsureTypeFilter(undefined)
+              }
+            }}
+            size="small"
+            sx={{
+              '& .MuiToggleButton-root': {
+                textTransform: 'none',
+                px: 2,
+              },
+            }}
+          >
+            <ToggleButton value="all">全部資料</ToggleButton>
+            <ToggleButton value="notReleased">未解除</ToggleButton>
+            <ToggleButton value="released">已解除</ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
         {/* ORD_CH 按鈕區域 */}
         {/* {filteredDescData.length > 0 && (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -419,7 +536,7 @@ export default function EnsureTable({ data = [], descData = [] }) {
               CLOSE_AMOUNT: false,
               EST_ENSURE_AMOUNT: false,
               ENSURE_START_DATE: false,
-              STOP_ENSURE_DATE: false,
+              STOP_ENSURE_DATE: true,
               PROJECT_ID: false,
               ORD_NO: false,
               DIV: false,

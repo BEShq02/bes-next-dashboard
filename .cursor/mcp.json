@@ -10,10 +10,29 @@
       "command": "npx",
       "args": ["-y", "@notionhq/notion-mcp-server"],
       "env": {
-        "NOTION_TOKEN": "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"
+        "NOTION_TOKEN": "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"
       }
     },
-    "mssqlStage": {
+    "mssqlDW": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@executeautomation/database-server",
+        "--sqlserver",
+        "--server",
+        "10.21.1.125",
+        "--port",
+        "1434",
+        "--database",
+        "DW",
+        "--user",
+        "viewer",
+        "--password",
+        "Bes@75094900"
+      ],
+      "type": "stdio"
+    },
+    "mssqlSTAGE": {
       "command": "npx",
       "args": [
         "-y",
@@ -26,9 +45,28 @@
         "--database",
         "STAGE",
         "--user",
-        "sa",
+        "viewer",
         "--password",
-        "bes@75094900"
+        "Bes@75094900"
+      ],
+      "type": "stdio"
+    },
+    "mssqlfinedb": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@executeautomation/database-server",
+        "--sqlserver",
+        "--server",
+        "10.21.1.125",
+        "--port",
+        "1434",
+        "--database",
+        "finedb",
+        "--user",
+        "viewer",
+        "--password",
+        "Bes@75094900"
       ],
       "type": "stdio"
     }

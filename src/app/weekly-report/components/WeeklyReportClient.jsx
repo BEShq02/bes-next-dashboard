@@ -26,29 +26,29 @@ import RegulatoryTrack from '../sections/RegulatoryTrack'
 import CriticalpathCco from '../sections/CriticalpathCco'
 import ControversialCases from '../sections/ControversialCases'
 
-export default function WeeklyReportClient({ ordNoC }) {
+export default function WeeklyReportClient({ ordNoC, skipAuth = false, adminOrdNo = null }) {
   console.log(ordNoC)
   // 獲取 URL 參數
   const { token, ordNo: urlOrdNo } = useGetUrlParams()
   const ordNo = useGetOrdNo() // 保持原有邏輯兼容性
 
-  // 使用 URL 參數中的 ordNo 或回退到原有的 ordNo
-  const finalOrdNo = urlOrdNo || ordNo
+  // 使用 URL 參數中的 ordNo 或回退到原有的 ordNo，或使用 adminOrdNo
+  const finalOrdNo = adminOrdNo || urlOrdNo || ordNo
 
-  // Token 驗證（只有在有 token 參數時才進行驗證）
+  // Token 驗證（只有在有 token 參數時才進行驗證，且 skipAuth 為 false）
   const {
     isValid: tokenIsValid,
     loading: tokenLoading,
     error: tokenError,
     debugInfo: tokenDebugInfo,
-  } = useTokenValidation(token)
+  } = useTokenValidation(skipAuth ? null : token)
 
   const { selectedDate, handleDateChange, setDefaultDate } = useWeeklyReportDate()
   const is102B1A = finalOrdNo === '102B1A'
 
   // 決定是否需要進行資料查詢
-  // 現在強制要求必須有 token 且驗證通過才能查詢資料
-  const shouldFetchData = token && tokenIsValid
+  // Admin 模式：直接查詢；一般模式：必須有 token 且驗證通過才能查詢資料
+  const shouldFetchData = skipAuth ? finalOrdNo : (token && tokenIsValid)
   const { data, loading, error } = useDB(shouldFetchData ? finalOrdNo : null, selectedDate)
 
   useEffect(() => {
@@ -57,36 +57,55 @@ export default function WeeklyReportClient({ ordNoC }) {
     }
   }, [data.wkWeeklyDate, selectedDate, setDefaultDate])
 
-  // 強制要求 token 驗證
- //   // 沒有 token 參數
-//   if (!token || ordNoC !== 'TRUE') {
-//     return <Error message="存取被拒絕：缺少必要的驗證 token" debugInfo={null} />
-//   }
+  // Admin 模式：跳過 token 驗證
+  if (skipAuth) {
+    // 資料載入中
+    if (loading) {
+      return <Loading />
+    }
 
-//   // Token 驗證載入中
-//   if (tokenLoading) {
-//     return <Loading />
-//   }
+    // 資料查詢錯誤
+    if (error) {
+      return <Error message={error} />
+    }
 
-//   // Token 驗證失敗
-//   if (tokenError || tokenIsValid === false) {
-//     return <Error message={tokenError || 'Token 驗證失敗'} debugInfo={tokenDebugInfo} />
-//   }
+    if (data.message === '沒有找到相關資料') {
+      return <Error message={data.message} />
+    } else if (!data.message === '初始化空資料' || !data || !data.wkMain?.[0]) {
+      return null
+    }
+  } else {
+    // 一般模式：強制要求 token 驗證
+    // 沒有 token 參數
+    if (!token || ordNoC !== 'TRUE') {
+      return <Error message="存取被拒絕：缺少必要的驗證 token" debugInfo={null} />
+    }
 
-  // 資料載入中
-  if (loading) {
-    return <Loading />
-  }
+    // Token 驗證載入中
+    if (tokenLoading) {
+      return <Loading />
+    }
 
-  // 資料查詢錯誤
-  if (error) {
-    return <Error message={error} />
-  }
+    // Token 驗證失敗
+    if (tokenError || tokenIsValid === false) {
+      return <Error message={tokenError || 'Token 驗證失敗'} debugInfo={tokenDebugInfo} />
+    }
 
-  if (data.message === '沒有找到相關資料') {
-    return <Error message={data.message} />
-  } else if (!data.message === '初始化空資料' || !data || !data.wkMain?.[0]) {
-    return null
+    // 資料載入中
+    if (loading) {
+      return <Loading />
+    }
+
+    // 資料查詢錯誤
+    if (error) {
+      return <Error message={error} />
+    }
+
+    if (data.message === '沒有找到相關資料') {
+      return <Error message={data.message} />
+    } else if (!data.message === '初始化空資料' || !data || !data.wkMain?.[0]) {
+      return null
+    }
   }
 
   return (

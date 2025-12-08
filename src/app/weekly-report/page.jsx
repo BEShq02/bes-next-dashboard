@@ -1,8 +1,16 @@
 import { tables } from '@/lib/tables'
 import WeeklyReportClient from './components/WeeklyReportClient'
 
-export default async function WeeklyReport() {
+export default async function WeeklyReport({ searchParams }) {
+  const { ORD_NO: ordNo, fromAdmin } = await searchParams
   const ordNoC = await tables.sysAccessToken.getOrdNo()
+  
+  // 只有當 fromAdmin=true 時才允許跳過驗證（從 admin 頁面來的）
+  if (fromAdmin === 'true' && ordNo) {
+    return <WeeklyReportClient skipAuth={true} adminOrdNo={ordNo} />
+  }
+  
+  // 其他情況都需要 token 驗證
   return <WeeklyReportClient ordNoC={ordNoC} />
 }
 

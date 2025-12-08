@@ -1,0 +1,21 @@
+---
+description: MCP 使用時機
+alwaysApply: false
+---
+# MSSQL 資料庫 MCP 連接規則
+
+## 資料庫識別與 MCP 伺服器對應
+
+當用戶提到以下資料庫時，請使用對應的 MCP 伺服器：
+
+### STAGE 資料庫
+- **關鍵字**：`STAGE`、`STAGE 資料庫`、`stage`、`Stage`
+- **MCP 伺服器**：`mssqlSTAGE`
+
+### DW 資料庫
+- **關鍵字**：`DW`、`DW 資料庫`、`dw`、`Dw`
+- **MCP 伺服器**：`mssqlDW`
+
+### finedb 資料庫
+- **關鍵字**：`finedb`、`finedb 資料庫`、`finedb`、`fineDB`
+- **MCP 伺服器**：`mssqlfinedb`

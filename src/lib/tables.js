@@ -301,13 +301,23 @@ export const tables = {
   },
   wkEnsure: {
     getData: async () => {
-      const query = `SELECT * FROM FR_WK_ENSURE ORDER BY DEFAULT_EXPAND_EDATE DESC, ORD_NO, ITEM_NO`
+      const query = `SELECT * FROM FR_WK_ENSURE ORDER BY ORD_NO, ENSURE_END_DATE`
       return await db.query(query)
     },
   },
   wkEnsureDesc: {
     getData: async () => {
       const query = `SELECT * FROM FR_WK_ENSURE_DESC`
+      return await db.query(query)
+    },
+  },
+  wkGantt: {
+    getData: async () => {
+      const query = `
+        SELECT ORD_CH, ORD_NO, MNG_CNAME, DEFAULT_SDATE
+        FROM FR_WK_GANTT
+        ORDER BY DEFAULT_SDATE DESC
+      `
       return await db.query(query)
     },
   },
