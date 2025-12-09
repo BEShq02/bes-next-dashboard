@@ -2,34 +2,26 @@
 
 import { formatNumber2 } from '@/utils/fm'
 
-import { Box, Card, Chip, Typography, CardContent } from '@mui/material'
-import {
-  Security as SecurityIcon,
-  Functions as FunctionsIcon,
-  Description as DescriptionIcon,
-  AttachMoney as AttachMoneyIcon,
-  AccountBalance as AccountBalanceIcon,
-} from '@mui/icons-material'
+import { Functions as FunctionsIcon } from '@mui/icons-material'
+import { Box, Card, Typography, CardContent } from '@mui/material'
 
-// 保固金種類配置 - 與 EnsureTypeChip.jsx 一致
-const ENSURE_TYPE_CONFIG = {
+import EnsureTypeChip from './EnsureTypeChip'
+
+// 保固金種類顏色配置（用於卡片背景色）
+const ENSURE_TYPE_COLOR_CONFIG = {
   切結書: {
-    icon: <DescriptionIcon />,
     color: '#1976d2', // 藍色
     backgroundColor: '#e3f2fd',
   },
   定存單: {
-    icon: <AccountBalanceIcon />,
     color: '#388e3c', // 綠色
     backgroundColor: '#e8f5e8',
   },
   保證書: {
-    icon: <SecurityIcon />,
     color: '#f57c00', // 橙色
     backgroundColor: '#fff3e0',
   },
   現金: {
-    icon: <AttachMoneyIcon />,
     color: '#d32f2f', // 紅色
     backgroundColor: '#ffebee',
   },
@@ -65,8 +57,8 @@ export default function MetricCard({
 }) {
   // 獲取顏色配置
   const getColors = () => {
-    if (ensureType && ENSURE_TYPE_CONFIG[ensureType]) {
-      return ENSURE_TYPE_CONFIG[ensureType]
+    if (ensureType && ENSURE_TYPE_COLOR_CONFIG[ensureType]) {
+      return ENSURE_TYPE_COLOR_CONFIG[ensureType]
     }
     return DEFAULT_COLOR
   }
@@ -338,27 +330,7 @@ export default function MetricCard({
         >
           {/* 保固種類 Chip (左上角) - 只有保固金種類顯示 */}
           {ensureType && (
-            <Chip
-              icon={colors.icon}
-              label={ensureType}
-              variant="outlined"
-              size="small"
-              sx={{
-                borderColor: colors.color,
-                color: colors.color,
-                backgroundColor: 'rgba(255,255,255,0.8)',
-                fontSize: '11px',
-                height: '20px',
-                '& .MuiChip-icon': {
-                  color: colors.color,
-                  fontSize: '14px !important',
-                },
-                '& .MuiChip-label': {
-                  px: 0.5,
-                  fontWeight: 600,
-                },
-              }}
-            />
+            <EnsureTypeChip type={ensureType} size="small" sx={{ backgroundColor: '#ffffff' }} />
           )}
 
           {/* 圖標和標題 - 整體保固狀況水平排列 */}
@@ -426,7 +398,7 @@ export default function MetricCard({
                 color: colors.color || colors.primary,
                 opacity: 0.8,
                 fontWeight: 600,
-                fontSize: '11px',
+                fontSize: '14px',
                 minWidth: 'fit-content',
               }}
             >
@@ -469,7 +441,7 @@ export default function MetricCard({
                 color: colors.color || colors.primary,
                 opacity: 0.8,
                 fontWeight: 600,
-                fontSize: '11px',
+                fontSize: '14px',
                 minWidth: 'fit-content',
               }}
             >

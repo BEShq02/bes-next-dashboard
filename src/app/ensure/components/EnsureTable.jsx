@@ -5,6 +5,7 @@ import { useMemo, useState, useEffect, useCallback } from 'react'
 
 import { red } from '@mui/material/colors'
 import { DataGrid } from '@mui/x-data-grid'
+import { getGridStringOperators } from '@mui/x-data-grid'
 import {
   Box,
   Stack,
@@ -216,6 +217,45 @@ export default function EnsureTable({ data = [], descData = [] }) {
     },
     { field: 'ENSURE_PROCESSING', headerName: '處理情形', minWidth: 120, disableColumnMenu: true },
     { field: 'REMARK', headerName: '備註', minWidth: 120, disableColumnMenu: true },
+    {
+      field: 'LAST_UPDATE_DATE',
+      headerName: '異動日期',
+      resizable: false,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'LAST_UPDATED_BY_NM',
+      headerName: '異動人員',
+      resizable: false,
+      disableColumnMenu: false,
+      filterOperators: getGridStringOperators().map(operator => ({
+        ...operator,
+        label:
+          operator.value === 'contains'
+            ? '包含'
+            : operator.value === 'notContains'
+              ? '不包含'
+              : operator.value === 'equals'
+                ? '等於'
+                : operator.value === 'notEquals'
+                  ? '不等於'
+                  : operator.value === 'startsWith'
+                    ? '開頭為'
+                    : operator.value === 'notStartsWith'
+                      ? '開頭不是'
+                      : operator.value === 'endsWith'
+                        ? '結尾為'
+                        : operator.value === 'notEndsWith'
+                          ? '結尾不是'
+                          : operator.value === 'isEmpty'
+                            ? '為空'
+                            : operator.value === 'isNotEmpty'
+                              ? '不為空'
+                              : operator.value === 'isAnyOf'
+                                ? '為任一'
+                                : operator.label,
+      })),
+    },
     { field: 'ENSURE_ID', headerName: '保固ID', resizable: false, disableColumnMenu: true },
     { field: 'MNG', headerName: '主管部門ID', resizable: false, disableColumnMenu: true },
     {
@@ -383,6 +423,47 @@ export default function EnsureTable({ data = [], descData = [] }) {
           getRowClassName={params => {
             return params.row.IS_EXPIRED === 'Y' ? 'expired-row' : ''
           }}
+          localeText={{
+            columnMenuSortAsc: '升冪排序',
+            columnMenuSortDesc: '降冪排序',
+            columnMenuFilter: '篩選',
+            columnMenuHideColumn: '隱藏欄位',
+            columnMenuShowColumns: '顯示欄位',
+            columnMenuManageColumns: '管理欄位',
+            columnMenuUnsort: '取消排序',
+            columnMenuPinToLeft: '釘選到左側',
+            columnMenuPinToRight: '釘選到右側',
+            columnMenuUnpin: '取消釘選',
+            filterPanelAddFilter: '新增篩選',
+            filterPanelDeleteIconLabel: '刪除',
+            filterPanelOperators: '運算子',
+            filterPanelOperatorAnd: '且',
+            filterPanelOperatorOr: '或',
+            filterPanelColumns: '欄位',
+            filterPanelInputLabel: '值',
+            filterPanelInputPlaceholder: '篩選值',
+            filterOperatorContains: '包含',
+            filterOperatorNotContains: '不包含',
+            filterOperatorEquals: '等於',
+            filterOperatorNotEquals: '不等於',
+            filterOperatorStartsWith: '開頭為',
+            filterOperatorNotStartsWith: '開頭不是',
+            filterOperatorEndsWith: '結尾為',
+            filterOperatorNotEndsWith: '結尾不是',
+            filterOperatorIs: '是',
+            filterOperatorNot: '不是',
+            filterOperatorAfter: '晚於',
+            filterOperatorOnOrAfter: '當日或之後',
+            filterOperatorBefore: '早於',
+            filterOperatorOnOrBefore: '當日或之前',
+            filterOperatorIsEmpty: '為空',
+            filterOperatorIsNotEmpty: '不為空',
+            filterOperatorIsAnyOf: '為任一',
+            columnsManagementSearchTitle: '搜尋欄位',
+            columnsManagementNoColumns: '沒有可顯示的欄位',
+            columnsManagementShowHideAllText: '顯示/隱藏全部',
+            columnsManagementReset: '重設',
+          }}
           sx={{
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: '#f5f5f5',
@@ -546,6 +627,47 @@ export default function EnsureTable({ data = [], descData = [] }) {
         getRowClassName={params => {
           return params.row.IS_EXPIRED === 'Y' ? 'expired-row' : ''
         }}
+        localeText={{
+          columnMenuSortAsc: '升冪排序',
+          columnMenuSortDesc: '降冪排序',
+          columnMenuFilter: '篩選',
+          columnMenuHideColumn: '隱藏欄位',
+          columnMenuShowColumns: '顯示欄位',
+          columnMenuManageColumns: '管理欄位',
+          columnMenuUnsort: '取消排序',
+          columnMenuPinToLeft: '釘選到左側',
+          columnMenuPinToRight: '釘選到右側',
+          columnMenuUnpin: '取消釘選',
+          filterPanelAddFilter: '新增篩選',
+          filterPanelDeleteIconLabel: '刪除',
+          filterPanelOperators: '運算子',
+          filterPanelOperatorAnd: '且',
+          filterPanelOperatorOr: '或',
+          filterPanelColumns: '欄位',
+          filterPanelInputLabel: '值',
+          filterPanelInputPlaceholder: '篩選值',
+          filterOperatorContains: '包含',
+          filterOperatorNotContains: '不包含',
+          filterOperatorEquals: '等於',
+          filterOperatorNotEquals: '不等於',
+          filterOperatorStartsWith: '開頭為',
+          filterOperatorNotStartsWith: '開頭不是',
+          filterOperatorEndsWith: '結尾為',
+          filterOperatorNotEndsWith: '結尾不是',
+          filterOperatorIs: '是',
+          filterOperatorNot: '不是',
+          filterOperatorAfter: '晚於',
+          filterOperatorOnOrAfter: '當日或之後',
+          filterOperatorBefore: '早於',
+          filterOperatorOnOrBefore: '當日或之前',
+          filterOperatorIsEmpty: '為空',
+          filterOperatorIsNotEmpty: '不為空',
+          filterOperatorIsAnyOf: '為任一',
+          columnsManagementSearchTitle: '搜尋欄位',
+          columnsManagementNoColumns: '沒有可顯示的欄位',
+          columnsManagementShowHideAllText: '顯示/隱藏全部',
+          columnsManagementReset: '重設',
+        }}
         sx={{
           '& .MuiDataGrid-columnHeaders': {
             backgroundColor: '#f5f5f5',
@@ -554,7 +676,7 @@ export default function EnsureTable({ data = [], descData = [] }) {
             backgroundColor: '#f5f5f5',
           },
           '& .expired-row': {
-            backgroundColor: red[100],
+            backgroundColor: red[50],
           },
         }}
         initialState={{
