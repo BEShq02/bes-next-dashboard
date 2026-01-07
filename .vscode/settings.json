@@ -128,5 +128,39 @@
   // 設定 Stripe CLI 安裝路徑，路徑導向到 stripe_cli 資料夾
   // "stripe.cliInstallPath": "C:\\Users\\user\\Documents\\GitHub\\mathify.io-next\\stripe_cli\\stripe.exe"
   "stripe.cliInstallPath": "C:\\Users\\226178\\Desktop\\GitHub\\mathify.io-next\\stripe_cli\\stripe.exe",
-  "workbench.sideBar.location": "left"
+  "workbench.sideBar.location": "left",
+  "window.nativeTabs": true,
+  "sqltools.connections": [
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Disabled"
+      },
+      "previewLimit": 50,
+      "server": "10.21.1.125",
+      "port": 3306,
+      "driver": "MySQL",
+      "name": "Mysql-Docker",
+      "database": "bes",
+      "username": "besadmin",
+      "password": "bes@75094900"
+    },
+    {
+      "connectionTimeout": 15,
+      "mssqlOptions": {
+        "appName": "SQLTools",
+        "useUTC": true,
+        "encrypt": true,
+        "trustServerCertificate": true
+      },
+      "ssh": "Disabled",
+      "previewLimit": 50,
+      "server": "10.21.1.125",
+      "port": 1434,
+      "driver": "MSSQL",
+      "name": "Mssql-Docker",
+      "username": "sa",
+      "password": "bes@75094900"
+    }
+  ]
 }

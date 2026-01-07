@@ -841,144 +841,177 @@ export default function EmployeeStockTrustPage() {
         </Card>
 
         {/* 圖表區域 */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card
-              sx={{
-                borderRadius: 3,
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-                border: '1px solid',
-                borderColor: alpha('#1976d2', 0.1),
-                background: 'white',
-                overflow: 'hidden',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <Box sx={{ p: 2, background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
-                <Typography variant="h6" fontWeight="bold" color="primary.dark">
-                  持股信託 vs 定存比較
-                </Typography>
-              </Box>
-              <Box
-                sx={{ p: 2, flex: 1, minHeight: '450px', display: 'flex', flexDirection: 'column' }}
+        <Box
+          sx={{
+            width: '100vw',
+            position: 'relative',
+            left: '50%',
+            right: '50%',
+            marginLeft: '-50vw',
+            marginRight: '-50vw',
+            px: { xs: 2, sm: 3, md: 4 },
+            mb: 4,
+          }}
+          ref={(el) => {
+            if (el && typeof window !== 'undefined') {
+              // #region agent log
+              const rect = el.getBoundingClientRect();
+              const windowWidth = window.innerWidth;
+              const boxWidth = rect.width;
+              const paddingLeft = window.getComputedStyle(el).paddingLeft;
+              const paddingRight = window.getComputedStyle(el).paddingRight;
+              const breakpoint = windowWidth < 600 ? 'xs' : windowWidth < 960 ? 'sm' : windowWidth < 1280 ? 'md' : 'lg';
+              fetch('http://127.0.0.1:7242/ingest/180b4965-2a13-49e7-bddd-86cd8442f32b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.jsx:844',message:'Chart grid container render',data:{windowWidth,boxWidth,paddingLeft,paddingRight,breakpoint,fullWidth:boxWidth === windowWidth},timestamp:Date.now(),sessionId:'debug-session',runId:'refactored',hypothesisId:'A'})}).catch(()=>{});
+              // #endregion
+            }
+          }}
+        >
+          <Grid 
+            container 
+            spacing={2}
+            sx={{ 
+              width: '100%',
+              margin: 0,
+            }}
+          >
+            <Grid item xs={12} sm={6} md={3}>
+              <Card
+                sx={{
+                  borderRadius: 3,
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+                  border: '1px solid',
+                  borderColor: alpha('#1976d2', 0.1),
+                  background: 'white',
+                  overflow: 'hidden',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
               >
-                <Box sx={{ height: '400px', width: '100%', flex: 1 }}>
-                  <ReactECharts
-                    option={comparisonChartOption}
-                    style={{ height: '100%', width: '100%' }}
-                    opts={{ renderer: 'canvas', devicePixelRatio: 2 }}
-                    notMerge={true}
-                    lazyUpdate={true}
-                  />
+                <Box sx={{ p: 2, background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
+                  <Typography variant="h6" fontWeight="bold" color="primary.dark">
+                    持股信託 vs 定存比較
+                  </Typography>
                 </Box>
-              </Box>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card
-              sx={{
-                borderRadius: 3,
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-                border: '1px solid',
-                borderColor: alpha('#1976d2', 0.1),
-                background: 'white',
-                overflow: 'hidden',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <Box sx={{ p: 2, background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
-                <Typography variant="h6" fontWeight="bold" color="primary.dark">
-                  不同離職時間點的年化報酬率
-                </Typography>
-              </Box>
-              <Box
-                sx={{ p: 2, flex: 1, minHeight: '450px', display: 'flex', flexDirection: 'column' }}
+                <Box
+                  sx={{ p: 2, flex: 1, minHeight: '450px', display: 'flex', flexDirection: 'column' }}
+                >
+                  <Box sx={{ height: '400px', width: '100%', flex: 1 }}>
+                    <ReactECharts
+                      option={comparisonChartOption}
+                      style={{ height: '100%', width: '100%' }}
+                      opts={{ renderer: 'canvas', devicePixelRatio: 2 }}
+                      notMerge={true}
+                      lazyUpdate={true}
+                    />
+                  </Box>
+                </Box>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card
+                sx={{
+                  borderRadius: 3,
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+                  border: '1px solid',
+                  borderColor: alpha('#1976d2', 0.1),
+                  background: 'white',
+                  overflow: 'hidden',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
               >
-                <Box sx={{ height: '400px', width: '100%', flex: 1 }}>
-                  <ReactECharts
-                    option={returnRateChartOption}
-                    style={{ height: '100%', width: '100%' }}
-                    opts={{ renderer: 'canvas', devicePixelRatio: 2 }}
-                    notMerge={true}
-                    lazyUpdate={true}
-                  />
+                <Box sx={{ p: 2, background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
+                  <Typography variant="h6" fontWeight="bold" color="primary.dark">
+                    不同離職時間點的年化報酬率
+                  </Typography>
                 </Box>
-              </Box>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card
-              sx={{
-                borderRadius: 3,
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-                border: '1px solid',
-                borderColor: alpha('#1976d2', 0.1),
-                background: 'white',
-                overflow: 'hidden',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <Box sx={{ p: 2, background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
-                <Typography variant="h6" fontWeight="bold" color="primary.dark">
-                  不同股價情境下的5年總報酬
-                </Typography>
-              </Box>
-              <Box
-                sx={{ p: 2, flex: 1, minHeight: '450px', display: 'flex', flexDirection: 'column' }}
+                <Box
+                  sx={{ p: 2, flex: 1, minHeight: '450px', display: 'flex', flexDirection: 'column' }}
+                >
+                  <Box sx={{ height: '400px', width: '100%', flex: 1 }}>
+                    <ReactECharts
+                      option={returnRateChartOption}
+                      style={{ height: '100%', width: '100%' }}
+                      opts={{ renderer: 'canvas', devicePixelRatio: 2 }}
+                      notMerge={true}
+                      lazyUpdate={true}
+                    />
+                  </Box>
+                </Box>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card
+                sx={{
+                  borderRadius: 3,
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+                  border: '1px solid',
+                  borderColor: alpha('#1976d2', 0.1),
+                  background: 'white',
+                  overflow: 'hidden',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
               >
-                <Box sx={{ height: '400px', width: '100%', flex: 1 }}>
-                  <ReactECharts
-                    option={stockPriceScenarioOption}
-                    style={{ height: '100%', width: '100%' }}
-                    opts={{ renderer: 'canvas', devicePixelRatio: 2 }}
-                    notMerge={true}
-                    lazyUpdate={true}
-                  />
+                <Box sx={{ p: 2, background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
+                  <Typography variant="h6" fontWeight="bold" color="primary.dark">
+                    不同股價情境下的5年總報酬
+                  </Typography>
                 </Box>
-              </Box>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card
-              sx={{
-                borderRadius: 3,
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-                border: '1px solid',
-                borderColor: alpha('#1976d2', 0.1),
-                background: 'white',
-                overflow: 'hidden',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <Box sx={{ p: 2, background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
-                <Typography variant="h6" fontWeight="bold" color="primary.dark">
-                  不同離職率情境下的公司實際成本
-                </Typography>
-              </Box>
-              <Box
-                sx={{ p: 2, flex: 1, minHeight: '450px', display: 'flex', flexDirection: 'column' }}
+                <Box
+                  sx={{ p: 2, flex: 1, minHeight: '450px', display: 'flex', flexDirection: 'column' }}
+                >
+                  <Box sx={{ height: '400px', width: '100%', flex: 1 }}>
+                    <ReactECharts
+                      option={stockPriceScenarioOption}
+                      style={{ height: '100%', width: '100%' }}
+                      opts={{ renderer: 'canvas', devicePixelRatio: 2 }}
+                      notMerge={true}
+                      lazyUpdate={true}
+                    />
+                  </Box>
+                </Box>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card
+                sx={{
+                  borderRadius: 3,
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+                  border: '1px solid',
+                  borderColor: alpha('#1976d2', 0.1),
+                  background: 'white',
+                  overflow: 'hidden',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
               >
-                <Box sx={{ height: '400px', width: '100%', flex: 1 }}>
-                  <ReactECharts
-                    option={turnoverRateOption}
-                    style={{ height: '100%', width: '100%' }}
-                    opts={{ renderer: 'canvas', devicePixelRatio: 2 }}
-                    notMerge={true}
-                    lazyUpdate={true}
-                  />
+                <Box sx={{ p: 2, background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
+                  <Typography variant="h6" fontWeight="bold" color="primary.dark">
+                    不同離職率情境下的公司實際成本
+                  </Typography>
                 </Box>
-              </Box>
-            </Card>
+                <Box
+                  sx={{ p: 2, flex: 1, minHeight: '450px', display: 'flex', flexDirection: 'column' }}
+                >
+                  <Box sx={{ height: '400px', width: '100%', flex: 1 }}>
+                    <ReactECharts
+                      option={turnoverRateOption}
+                      style={{ height: '100%', width: '100%' }}
+                      opts={{ renderer: 'canvas', devicePixelRatio: 2 }}
+                      notMerge={true}
+                      lazyUpdate={true}
+                    />
+                  </Box>
+                </Box>
+              </Card>
+            </Grid>
           </Grid>
-        </Grid>
+        </Box>
 
         {/* 5年完整鎖定期分析 */}
         <Card

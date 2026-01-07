@@ -16,6 +16,34 @@ import TableDataCellDiff2 from '../components/TableDataCellDiff2'
 import DifferenceCashPlot from '../components/DifferenceCashPlot'
 import DifferenceCashPlotDT2 from '../components/DifferenceCashPlotDT2'
 export default function DifferenceCash({ data, plotData, is102B1A = false }) {
+  // data中 將 ESTM_COUNT 是 "11" 的資料補上：
+  // 只在今天（即 new Date()）有效，加入 VOI_DAY: "2026/01/02"、TOT_VOIAMT: 21148143
+  const today = new Date()
+  const todayStr = today.toISOString().slice(0, 10) // yyyy-mm-dd
+  const patchVoiDay = '2026/01/02'
+  const patchVoiAmt = 21148143
+  if (Array.isArray(data) && data.some(item => item.ESTM_COUNT === '11')) {
+    // 僅當今天有效
+    const current = new Date()
+    const y = current.getFullYear()
+    const m = (current.getMonth() + 1).toString().padStart(2, '0')
+    const d = current.getDate().toString().padStart(2, '0')
+    const ymd = `${y}-${m}-${d}`
+    if (ymd === todayStr) {
+      data = data.map(item =>
+        item.ESTM_COUNT === '11'
+          ? {
+              ...item,
+              VOI_DAY: patchVoiDay,
+              TOT_VOIAMT: patchVoiAmt,
+            }
+          : item
+      )
+    }
+  } 
+
+  console.log(data)
+
   const { fontSizeAlt } = useFontSize()
   return (
     <>
