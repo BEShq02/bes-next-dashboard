@@ -23,25 +23,16 @@ export default function DifferenceCash({ data, plotData, is102B1A = false }) {
   const patchVoiDay = '2026/01/02'
   const patchVoiAmt = 21148143
   if (Array.isArray(data) && data.some(item => item.ESTM_COUNT === '11')) {
-    // 僅當今天有效
-    const current = new Date()
-    const y = current.getFullYear()
-    const m = (current.getMonth() + 1).toString().padStart(2, '0')
-    const d = current.getDate().toString().padStart(2, '0')
-    const ymd = `${y}-${m}-${d}`
-    if (ymd === todayStr) {
-      data = data.map(item =>
-        item.ESTM_COUNT === '11' &&
-        item.PROJECT_ID === '6220' &&
-        item.CALENDAR_DATE === '2026/01/04'
-          ? {
-              ...item,
-              VOI_DAY: patchVoiDay,
-              TOT_VOIAMT: patchVoiAmt,
-            }
-          : item
-      )
-    }
+    // 永久有效，補資料
+    data = data.map(item =>
+      item.ESTM_COUNT === '11' && item.PROJECT_ID === '6220' && item.CALENDAR_DATE === '2026/01/04'
+        ? {
+            ...item,
+            VOI_DAY: patchVoiDay,
+            TOT_VOIAMT: patchVoiAmt,
+          }
+        : item
+    )
   }
 
   console.log(data)
